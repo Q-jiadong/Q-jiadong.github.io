@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android, Java, Python, Linux" />
+  <meta name="keywords" content="-android -permission -权限," />
 
 
 
@@ -84,16 +84,25 @@
 
 
 
-<meta name="description" content="代码是音符，是色彩，程序也可以像音乐、画作一样感染人。">
+<meta name="description" content="引子在AndroidManifest.xml文件中，开发之可以自定义权限，这些自定义的权限只属于开发者自己及他所信赖的伙伴，以此限制其他人对自己进行调用。
+`
+&amp;lt;permission android:name=&amp;quot;com.test.permission.THIS_IS_MY_PERMISSION&amp;quot;
+            android:protectionLevel=[&amp;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="my-introduction">
-<meta property="og:url" content="https://q-jiadong.github.io/2016/07/20/my-introduction/index.html">
+<meta property="og:title" content="android:permission属性一叙">
+<meta property="og:url" content="https://q-jiadong.github.io/2016/07/25/android-note-1/index.html">
 <meta property="og:site_name" content="码Q有书">
-<meta property="og:description" content="代码是音符，是色彩，程序也可以像音乐、画作一样感染人。">
-<meta property="og:updated_time" content="2016-07-20T05:45:00.880Z">
+<meta property="og:description" content="引子在AndroidManifest.xml文件中，开发之可以自定义权限，这些自定义的权限只属于开发者自己及他所信赖的伙伴，以此限制其他人对自己进行调用。
+`
+&amp;lt;permission android:name=&amp;quot;com.test.permission.THIS_IS_MY_PERMISSION&amp;quot;
+            android:protectionLevel=[&amp;">
+<meta property="og:updated_time" content="2016-07-25T13:50:50.588Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="my-introduction">
-<meta name="twitter:description" content="代码是音符，是色彩，程序也可以像音乐、画作一样感染人。">
+<meta name="twitter:title" content="android:permission属性一叙">
+<meta name="twitter:description" content="引子在AndroidManifest.xml文件中，开发之可以自定义权限，这些自定义的权限只属于开发者自己及他所信赖的伙伴，以此限制其他人对自己进行调用。
+`
+&amp;lt;permission android:name=&amp;quot;com.test.permission.THIS_IS_MY_PERMISSION&amp;quot;
+            android:protectionLevel=[&amp;">
 
 
 
@@ -114,9 +123,9 @@
 
 
 
-  <link rel="canonical" href="https://q-jiadong.github.io/2016/07/20/my-introduction/"/>
+  <link rel="canonical" href="https://q-jiadong.github.io/2016/07/25/android-note-1/"/>
 
-  <title> my-introduction | 码Q有书 </title>
+  <title> android:permission属性一叙 | 码Q有书 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -238,7 +247,7 @@
             
             
               
-                my-introduction
+                android:permission属性一叙
               
             
           </h1>
@@ -250,11 +259,30 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-20T13:45:00+08:00" content="2016-07-20">
-              2016-07-20
+            <time itemprop="dateCreated" datetime="2016-07-25T20:30:00+08:00" content="2016-07-25">
+              2016-07-25
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">Android笔记</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
@@ -278,7 +306,41 @@
       
 
       
-        
+        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><pre><code>在AndroidManifest.xml文件中，开发之可以自定义权限，这些自定义的权限只属于开发者自己及他所信赖的伙伴，以此限制其他人对自己进行调用。
+`
+&lt;permission android:name=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot;
+            android:protectionLevel=[&quot;normal&quot; | &quot;dangerous&quot; | 
+                                     &quot;signature&quot; | &quot;signatureOrSystem&quot;]/&gt;
+`
+当然，如果是系统开发者，也可以在frameworks/base/core/res/下的AndroidMannifest.xml文件中自定义一个权限，这样整个系统都可以使用该权限。
+</code></pre><h2 id="解读"><a href="#解读" class="headerlink" title="解读"></a>解读</h2><pre><code>1. android:protectionLevel
+    这个是定义一个权限后为其设置的保护级别，具体可以看上一篇对android:protectionLevel的解读
+2. 如上应用A定义了一个权限后，就基本可以使用了。当我们在manifest文件中声明一个组件：activity/receiver/service等时，定义android:permission属性为这个权限即可。以service为例：
+`
+&lt;service 
+    android:name=&quot;com.test.permission.StartService&quot;  
+    android:permission=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot; &gt;  
+    &lt;intent-filter&gt;  
+        &lt;action android:name=&quot;com.test.action&quot; /&gt;  
+    &lt;/intent-filter&gt;  
+&lt;/service&gt; 
+`
+那么，如此一来，另一个应用B想要启用这个服务bindService()或startService()，需要申请这个权限：
+`
+&lt;uses-permission android:name=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot;/&gt;
+`
+但是，如果应用B与这个应用A共享uid，那么及时不申请权限，应用B也是可以启用这个服务的（这一点没有验证，但是共享uid的应用是共享权限的）。如果不知道这个权限且uid又不同，开发者无法启用这个服务的，这样一来，应用就受到了一定程度上的保护。
+</code></pre><h2 id="引申"><a href="#引申" class="headerlink" title="引申"></a>引申</h2><pre><code>下面来说一个复杂的情况，即考虑protectionLevel的情况，并且以系统开发为例。
+如果系统中没有自定义这么一个权限，应用也是可以使用的，这相当于android:permission定义的只是一个简单的字符串；
+如果这个应用（A）是系统应用，那么其他具有系统签名的应用是不需要申请权限的，那么只有三方应用在需要启用这个应用A的组件时，需要申请该权限（虽然只是一个字符串）；
+如果系统中定义了这么一个权限，但是protectionLevel又分为几种保护级（以normal和signatureOrSystem为例），情况就有不同了；
+如果android:protectionLevel=&quot;normal&quot;，那么情况与上述情况相同；
+如果android:protectionLevel=&quot;signature|System&quot;, 那么如果其他具有系统签名的应用在具有系统sharedUid属性时不需要申请权限，而没有系统sharedUid属性时则需要申请该权限才能启用应用A的组件；
+如果此时（android:protectionLevel=&quot;signature|System&quot;）是三方应用想要启用应用A的组件，无论如何都是不行的。
+经过这种思路，基本可以保证系统应用免收三方应用随意启动的干扰，并对三方应用进行一些限制，从而保证系统清爽。
+</code></pre><h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><pre><code>1. 有一种情况还未验证：如果不是系统应用，那么protectionLevel的影响会如何呢？
+2. 如果应用A在用户的允许下获得一些权限，那么与其具有相同uid的应用B，是不是不获取就可以获得这些权限呢？如果是，应用B是否有不合理的情况呢，比如不该获得这些权限中的某些呢？
+</code></pre>
       
     </div>
 
@@ -303,22 +365,24 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/android-permission-权限/" rel="tag">#-android -permission -权限</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/18/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2016/07/20/my-introduction/" rel="next" title="my-introduction">
+                <i class="fa fa-chevron-left"></i> my-introduction
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/25/android-note-1/" rel="prev" title="android:permission属性一叙">
-                android:permission属性一叙 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -452,7 +516,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引子"><span class="nav-number">1.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解读"><span class="nav-number">2.</span> <span class="nav-text">解读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引申"><span class="nav-number">3.</span> <span class="nav-text">引申</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">4.</span> <span class="nav-text">思考</span></a></li></ol></div>
             
           </div>
         </section>
