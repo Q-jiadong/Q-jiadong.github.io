@@ -303,26 +303,32 @@
       
         
           
-            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><pre><code>在AndroidManifest.xml文件中，开发之可以自定义权限，这些自定义的权限只属于开发者
-</code></pre><p>自己及他所信赖的伙伴，以此限制其他人对自己进行调用。<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;permission android:name=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot;</div><div class="line">            android:protectionLevel=[&quot;normal&quot; | &quot;dangerous&quot; | </div><div class="line">                                     &quot;signature&quot; | &quot;signatureOrSystem&quot;]/&gt;</div></pre></td></tr></table></figure></p>
-<pre><code>当然，如果是系统开发者，也可以在frameworks/base/core/res/下的AndroidMannifest.xml
-</code></pre><p>文件中自定义一个权限，这样整个系统都可以使用该权限。</p>
-<h2 id="解读"><a href="#解读" class="headerlink" title="解读"></a>解读</h2><pre><code>1. android:protectionLevel
-    这个是定义一个权限后为其设置的保护级别，具体可以看上一篇对android:protectionLevel
-的解读
-2. 如上应用A定义了一个权限后，就基本可以使用了。当我们在manifest文件中声明一个组件：
-</code></pre><p>activity/receiver/service等时，定义android:permission属性为这个权限即可。以service为例：<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;service </div><div class="line">    android:name=&quot;com.test.permission.StartService&quot;  </div><div class="line">    android:permission=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot; &gt;  </div><div class="line">    &lt;intent-filter&gt;  </div><div class="line">        &lt;action android:name=&quot;com.test.action&quot; /&gt;  </div><div class="line">    &lt;/intent-filter&gt;  </div><div class="line">&lt;/service&gt;</div></pre></td></tr></table></figure></p>
-<pre><code>那么，如此一来，另一个应用B想要启用这个服务bindService()或startService()，需要申请这个
-</code></pre><p>权限：<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;uses-permission android:name=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot;/&gt;</div></pre></td></tr></table></figure></p>
-<pre><code>但是，如果应用B与这个应用A共享uid，那么及时不申请权限，应用B也是可以启用这个服务的（这
-</code></pre><p>一点没有验证，但是共享uid的应用是共享权限的）。如果不知道这个权限且uid又不同，开发者无法启<br>用这个服务的，这样一来，应用就受到了一定程度上的保护。</p>
-<h2 id="引申"><a href="#引申" class="headerlink" title="引申"></a>引申</h2><pre><code>下面来说一个复杂的情况，即考虑protectionLevel的情况，并且以系统开发为例。
-如果系统中没有自定义这么一个权限，应用也是可以使用的，这相当于android:permission定义的
-</code></pre><p>只是一个简单的字符串；<br>    如果这个应用（A）是系统应用，那么其他具有系统签名的应用是不需要申请权限的，那么只有三方<br>应用在需要启用这个应用A的组件时，需要申请该权限（虽然只是一个字符串）；<br>    如果系统中定义了这么一个权限，但是protectionLevel又分为几种保护级（以normal和signature-<br>OrSystem为例），情况就有不同了；<br>    如果android:protectionLevel=”normal”，那么情况与上述情况相同；<br>    如果android:protectionLevel=”signature|System”, 那么如果其他具有系统签名的应用在具有系统<br>sharedUid属性时不需要申请权限，而没有系统sharedUid属性时则需要申请该权限才能启用应用A的组件；<br>    如果此时（android:protectionLevel=”signature|System”）是三方应用想要启用应用A的组件，无<br>论如何都是不行的。<br>    经过这种思路，基本可以保证系统应用免收三方应用随意启动的干扰，并对三方应用进行一些限制，<br>从而保证系统清爽。</p>
-<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><pre><code>1. 有一种情况还未验证：如果不是系统应用，那么protectionLevel的影响会如何呢？
-2. 如果应用A在用户的允许下获得一些权限，那么与其具有相同uid的应用B，是不是不获取就可以
-</code></pre><p>获得这些权限呢？如果是，应用B是否有不合理的情况呢，比如不该获得这些权限中的某些呢？</p>
+            <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><pre><code>在AndroidManifest.xml文件中，开发之可以自定义权限，这些自定义的权限只属于开发者自己及他所信赖的伙伴，以此限制其他人对自己进行调用。
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;permission android:name=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot;</div><div class="line">            android:protectionLevel=[&quot;normal&quot; | &quot;dangerous&quot; | </div><div class="line">                                     &quot;signature&quot; | &quot;signatureOrSystem&quot;]/&gt;</div></pre></td></tr></table></figure>
+
+
+当然，如果是系统开发者，也可以在frameworks/base/core/res/下的Android-  Manifest.xml文件中自定义一个权限，这样整个系统都可以使用该权限。
+</code></pre><h2 id="解读"><a href="#解读" class="headerlink" title="解读"></a>解读</h2><pre><code>1. android:protectionLevel
+    这个是定义一个权限后为其设置的保护级别，具体可以看上一篇对  android:protectionLevel的解读
+2. 如上应用A定义了一个权限后，就基本可以使用了。当我们在manifest文件中  声明一个组件：activity/receiver/service等时，定义android:permission属性为这  个权限即可。以service为例：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;service </div><div class="line">    android:name=&quot;com.test.permission.StartService&quot;  </div><div class="line">    android:permission=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot; &gt;  </div><div class="line">    &lt;intent-filter&gt;  </div><div class="line">        &lt;action android:name=&quot;com.test.action&quot; /&gt;  </div><div class="line">    &lt;/intent-filter&gt;  </div><div class="line">&lt;/service&gt;</div></pre></td></tr></table></figure>
+
+那么，如此一来，另一个应用B想要启用这个服务bindService()或startService() ，需要申请这个权限：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;uses-permission android:name=&quot;com.test.permission.THIS_IS_MY_PERMISSION&quot;/&gt;</div></pre></td></tr></table></figure>
+
+但是，如果应用B与这个应用A共享uid，那么及时不申请权限，应用B也是可以启  用这个服务的（这一点没有验证，但是共享uid的应用是共享权限的）。如果不知道这  个权限且uid又不同，开发者无法启用这个服务的，这样一来，应用就受到了一定程度  上的保护。
+</code></pre><h2 id="引申"><a href="#引申" class="headerlink" title="引申"></a>引申</h2><pre><code>下面来说一个复杂的情况，即考虑protectionLevel的情况，并且以系统开发为例。
+如果系统中没有自定义这么一个权限，应用也是可以使用的，这相当于  android:permission定义的只是一个简单的字符串；
+如果这个应用（A）是系统应用，那么其他具有系统签名的应用是不需要申请权限  的，那么只有三方应用在需要启用这个应用A的组件时，需要申请该权限（虽然只是一  个字符串）；
+如果系统中定义了这么一个权限，但是protectionLevel又分为几种保护级（以  normal和signatureOrSystem为例），情况就有不同了；
+如果android:protectionLevel=&quot;normal&quot;，那么情况与上述情况相同；
+如果android:protectionLevel=&quot;signature|System&quot;,那么如果其他具有系统签名  的应用在具有系统sharedUid属性时不需要申请权限，而没有系统sharedUid属性时则  需要申请该权限才能启用应用A的组件；
+如果此时（android:protectionLevel=&quot;signature|System&quot;）是三方应用想要启  用应用A的组件，无论如何都是不行的。
+经过这种思路，基本可以保证系统应用免收三方应用随意启动的干扰，并对三方  应用进行一些限制，从而保证系统清爽。
+</code></pre><h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><pre><code>1. 有一种情况还未验证：如果不是系统应用，那么protectionLevel的影响会如  何呢？
+2. 如果应用A在用户的允许下获得一些权限，那么与其具有相同uid的应用B，  不是不获取就可以获得这些权限呢？如果是，应用B是否有不合理的情况呢，比如不该  获得这些权限中的某些呢？
+</code></pre>
           
         
       
